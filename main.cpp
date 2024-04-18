@@ -4,22 +4,25 @@
 #include <ctime>
 
 
-int getRandomValue();
+int getRandomValue( const int maxRandomValue );
 std::string getUserName();
 int playGame( const int randomValue ); // return attempts
+void parseArgumets( const int argc, const char** argv  );
 
-int main() {
+int main( int argc, char** argv ) {
 
-    playGame( getRandomValue() );
+    int maxRandomValue{ 100 };
+
+    playGame( getRandomValue( maxRandomValue ) );
 
     return 0;
 }
 
-int getRandomValue() {
+int getRandomValue( const int maxRandomValue ) {
 
     std::srand(std::time(nullptr));
 
-    return std::rand() % 100;
+    return std::rand() % maxRandomValue;
 }
 
 std::string getUserName() {
@@ -40,6 +43,7 @@ int playGame( const int randomValue ) {
     bool isWin{false};
     int attempts{0};
 
+
     for( int currentValue{-1} ; isWin == false ; ++attempts) {
 
         std::cin >> currentValue;
@@ -57,4 +61,9 @@ int playGame( const int randomValue ) {
     std::cout << "attempts = " << attempts << std::endl;
 
     return attempts;
+}
+
+void parseArgumets( const int argc, const char** argv,  int &maRandomValue ) {
+
+
 }
