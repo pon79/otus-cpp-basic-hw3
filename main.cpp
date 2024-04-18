@@ -6,13 +6,11 @@
 
 int getRandomValue();
 std::string getUserName();
+int playGame( const int randomValue ); // return attempts
 
 int main() {
 
-    std::cout << getUserName() << std::endl;
-
-    std::cout << getRandomValue() << std::endl;
-
+    playGame( getRandomValue() );
 
     return 0;
 }
@@ -33,4 +31,30 @@ std::string getUserName() {
     std::cin >> userName;
 
     return userName;
+}
+
+int playGame( const int randomValue ) {
+
+    std::cout << "Enter your guess:" << std::endl;
+
+    bool isWin{false};
+    int attempts{0};
+
+    for( int currentValue{-1} ; isWin == false ; ++attempts) {
+
+        std::cin >> currentValue;
+
+        if (randomValue <  currentValue ) {
+            std::cout << "less than " << currentValue << std::endl;
+        } else if (randomValue > currentValue) {
+            std::cout << "greater than " << currentValue << std::endl;
+        } else {
+            std::cout << "you win! ";
+            isWin = true;
+        }
+    }
+
+    std::cout << "attempts = " << attempts << std::endl;
+
+    return attempts;
 }
