@@ -7,11 +7,13 @@
 int getRandomValue( const int maxRandomValue );
 std::string getUserName();
 int playGame( const int randomValue ); // return attempts
-void parseArgumets( const int argc, const char** argv  );
+void parseArgumets( const int argc, char** argv, int& maxRandomValue  );
 
 int main( int argc, char** argv ) {
 
     int maxRandomValue{ 100 };
+
+    parseArgumets( argc, argv, maxRandomValue );
 
     playGame( getRandomValue( maxRandomValue ) );
 
@@ -63,7 +65,19 @@ int playGame( const int randomValue ) {
     return attempts;
 }
 
-void parseArgumets( const int argc, const char** argv,  int &maRandomValue ) {
+void parseArgumets( const int argc, char** argv,  int& maxRandomValue ) {
 
+
+    for( int index{} ; index < argc ; ++index ) {
+
+        if( std::string{ argv[index] } == "-max") {
+            if( argv[index + 1] ) { // is there any next argument? (argv[argc], is guaranteed to be a null pointer)
+                ++index;
+                maxRandomValue = std::stoi( std::string{ argv[index] } ); // TD DO check result stoi
+            } else {
+                std::cout << "Error arguments" << std::endl;
+            }
+        }
+    }
 
 }
