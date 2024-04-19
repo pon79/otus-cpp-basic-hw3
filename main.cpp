@@ -1,20 +1,28 @@
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <string>
 #include <ctime>
 
 
 int getRandomValue( const int maxRandomValue );
+
 std::string getUserName();
+
 int playGame( const int randomValue ); // return attempts
+
 void parseArgumets( const int argc, char** argv, int& maxRandomValue, bool& isOnlyPrintTable );
+
+void saveResult( const char* highScoresFileName, const std::string userName, const int attempts );
 
 
 int main( int argc, char** argv ) {
 
+    const char* highScoresFileName{ "high_scores.txt" };
+    const std::string userName{ getUserName() };
+
     int maxRandomValue{ 100 };
     bool isOnlyPrintTable{ false };
-
     parseArgumets( argc, argv, maxRandomValue, isOnlyPrintTable );
 
     if( isOnlyPrintTable ) {
@@ -24,7 +32,7 @@ int main( int argc, char** argv ) {
         const int attempts{ playGame( getRandomValue( maxRandomValue ) ) };
 
         if( attempts > 0 ) {
-            // TO DO save result
+            saveResult( highScoresFileName, userName, attempts );
         }
     }
 
@@ -111,4 +119,17 @@ void parseArgumets( const int argc, char** argv,  int& maxRandomValue, bool& isO
             }
         }
     }
+}
+
+void saveResult( const char* highScoresFileName, const std::string userName, const int attempts ) {
+
+    std::ofstream outFile{ highScoresFileName, std::ios_base::app };
+
+    if ( !outFile.is_open() ) {
+        std::cout << "Failed to open file for write: " << highScoresFileName << "!" << std::endl;
+        return;
+    }
+
+    // Append new results to the table:
+    outFile << userName << ' ' << attempts << std::endl;
 }
