@@ -134,17 +134,24 @@ void saveResult( const char* highScoresFileName, const std::string userName, con
         return;
     }
 
-    bool isFound{ false };
+    //  user already in table?
     for (std::string line; std::getline(scoresFile, line);) {
+
         if( line.starts_with( userName ) ) {
-            scoresFile.seekp( -4, std::ios_base::cur ); // let's go back 4 characters
-            scoresFile << std::setw(3) << attempts << std::endl;
-            isFound = true;
-            break;
+
+            const int lastAttempts{ std::atoi( line.substr(line.size() - 3 ).data() ) }; // TO DO check atoi result
+
+            if( attempts < lastAttempts ) {
+                scoresFile.seekp( -4, std::ios_base::cur ); // let's go back 4 characters
+                scoresFile << std::setw(3) << attempts << std::endl;
+            }
+
+            return;
         }
     }
 
-    if( !isFound && scoresFile.eof() ) {
+    // new user
+    if( scoresFile.eof() ) {
         scoresFile.clear();
         scoresFile << userName << ' ' << std::setw(3) << attempts << std::endl;
     }
