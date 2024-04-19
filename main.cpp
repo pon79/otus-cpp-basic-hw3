@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <iomanip>
 #include <string>
 #include <ctime>
 
@@ -126,15 +127,27 @@ void parseArgumets( const int argc, char** argv,  int& maxRandomValue, bool& isO
 
 void saveResult( const char* highScoresFileName, const std::string userName, const int attempts ) {
 
-    std::ofstream outFile{ highScoresFileName, std::ios_base::app };
+    std::fstream scoresFile{ highScoresFileName };
 
-    if ( !outFile.is_open() ) {
+    if( !scoresFile.is_open() ) {
         std::cout << "Failed to open file for write: " << highScoresFileName << "!" << std::endl;
         return;
     }
 
-    // Append new results to the table:
-    outFile << userName << ' ' << attempts << std::endl;
+    bool isFound{ false };
+    for (std::string line; std::getline(scoresFile, line);) {
+        if( line.starts_with( userName ) ) {
+            scoresFile.seekp( -4, std::ios_base::cur ); // let's go back 4 characters
+            scoresFile << std::setw(3) << attempts << std::endl;
+            isFound = true;
+            break;
+        }
+    }
+
+    if( !isFound && scoresFile.eof() ) {
+        scoresFile.clear();
+        scoresFile << userName << ' ' << std::setw(3) << attempts << std::endl;
+    }
 }
 
 void printResult( const char* highScoresFileName ) {
