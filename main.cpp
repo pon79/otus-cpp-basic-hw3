@@ -7,18 +7,25 @@
 int getRandomValue( const int maxRandomValue );
 std::string getUserName();
 int playGame( const int randomValue ); // return attempts
-void parseArgumets( const int argc, char** argv, int& maxRandomValue  );
+void parseArgumets( const int argc, char** argv, int& maxRandomValue, bool& isOnlyPrintTable );
+
 
 int main( int argc, char** argv ) {
 
     int maxRandomValue{ 100 };
+    bool isOnlyPrintTable{ false };
 
-    parseArgumets( argc, argv, maxRandomValue );
+    parseArgumets( argc, argv, maxRandomValue, isOnlyPrintTable );
 
-    const int attempts{ playGame( getRandomValue( maxRandomValue ) ) };
+    if( isOnlyPrintTable ) {
+        // TO DO print High scores table
+    }
+    else {
+        const int attempts{ playGame( getRandomValue( maxRandomValue ) ) };
 
-    if( attempts > 0 ) {
-        // TO DO save result
+        if( attempts > 0 ) {
+            // TO DO save result
+        }
     }
 
     return 0;
@@ -83,12 +90,18 @@ int playGame( const int randomValue ) {
     return attempts;
 }
 
-void parseArgumets( const int argc, char** argv,  int& maxRandomValue ) {
-
+void parseArgumets( const int argc, char** argv,  int& maxRandomValue, bool& isOnlyPrintTable ) {
 
     for( int index{} ; index < argc ; ++index ) {
 
-        if( std::string{ argv[index] } == "-max") {
+        const std::string arg{ argv[index] };
+
+        if( arg == "-table" ) {
+            isOnlyPrintTable = true;
+            return;
+        }
+
+        if(arg == "-max") {
 
             if( argv[index + 1] ) { // is there any next argument? (argv[argc], is guaranteed to be a null pointer)
                 ++index;
