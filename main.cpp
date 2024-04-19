@@ -15,24 +15,27 @@ void parseArgumets( const int argc, char** argv, int& maxRandomValue, bool& isOn
 
 void saveResult( const char* highScoresFileName, const std::string userName, const int attempts );
 
+void printResult( const char* highScoresFileName );
+
 
 int main( int argc, char** argv ) {
 
     const char* highScoresFileName{ "high_scores.txt" };
-    const std::string userName{ getUserName() };
 
     int maxRandomValue{ 100 };
     bool isOnlyPrintTable{ false };
     parseArgumets( argc, argv, maxRandomValue, isOnlyPrintTable );
 
     if( isOnlyPrintTable ) {
-        // TO DO print High scores table
+        printResult( highScoresFileName );
     }
     else {
+        const std::string userName{ getUserName() };
         const int attempts{ playGame( getRandomValue( maxRandomValue ) ) };
 
         if( attempts > 0 ) {
             saveResult( highScoresFileName, userName, attempts );
+            printResult( highScoresFileName );
         }
     }
 
@@ -93,7 +96,7 @@ int playGame( const int randomValue ) {
         }
     }
 
-    std::cout << "attempts = " << attempts << std::endl;
+    std::cout << "attempts = " << attempts << std::endl << std::endl;
 
     return attempts;
 }
@@ -132,4 +135,30 @@ void saveResult( const char* highScoresFileName, const std::string userName, con
 
     // Append new results to the table:
     outFile << userName << ' ' << attempts << std::endl;
+}
+
+void printResult( const char* highScoresFileName ) {
+
+    std::ifstream inFile{ highScoresFileName };
+
+    if ( !inFile.is_open() ) {
+        std::cout << "Failed to open file for read: " << highScoresFileName << "!" << std::endl;
+        return;
+    }
+
+    std::cout << "High scores table: " << std::endl;
+
+    std::string username;
+    int high_score{};
+
+    while ( inFile.good() ) {
+
+        if( inFile >> username >> high_score ) {
+
+            inFile.ignore(); // Ignore the end of line symbol
+
+            // Print the information to the screen
+            std::cout << username << '\t' << high_score << std::endl;
+        }
+    }
 }
