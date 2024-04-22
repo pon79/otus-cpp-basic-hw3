@@ -139,6 +139,7 @@ void saveResult( const char* highScoresFileName, const std::string userName, con
 
                 if( attempts < lastAttempts ) {
                     scoresFile.seekp( -4, std::ios_base::cur ); // let's go back 4 characters
+                    scoresFile.fill('0');
                     scoresFile << std::setw(3) << attempts << std::endl;
                 }
 
@@ -161,6 +162,7 @@ void saveResult( const char* highScoresFileName, const std::string userName, con
     }
 
     // new user
+    scoresFile.fill('0');
     scoresFile << userName << ' ' << std::setw(3) << attempts << std::endl;
 }
 
