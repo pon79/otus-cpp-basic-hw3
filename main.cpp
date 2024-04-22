@@ -127,34 +127,41 @@ void parseArgumets( const int argc, char** argv,  int& maxRandomValue, bool& isO
 
 void saveResult( const char* highScoresFileName, const std::string userName, const int attempts ) {
 
-    std::fstream scoresFile{ highScoresFileName };
+    std::fstream scoresFile{ highScoresFileName  }; // in | out
 
-    if( !scoresFile.is_open() ) {
-        std::cout << "Failed to open file for write: " << highScoresFileName << "!" << std::endl;
-        return;
-    }
+    if( scoresFile.is_open() ) {
 
-    //  user already in table?
-    for (std::string line; std::getline(scoresFile, line);) {
+        //  user already in table?
+        for (std::string line; std::getline(scoresFile, line);) {
+            if( line.starts_with( userName ) ) {
 
-        if( line.starts_with( userName ) ) {
+                const int lastAttempts{ std::atoi( line.substr(line.size() - 3 ).data() ) }; // TO DO check atoi result
 
-            const int lastAttempts{ std::atoi( line.substr(line.size() - 3 ).data() ) }; // TO DO check atoi result
+                if( attempts < lastAttempts ) {
+                    scoresFile.seekp( -4, std::ios_base::cur ); // let's go back 4 characters
+                    scoresFile << std::setw(3) << attempts << std::endl;
+                }
 
-            if( attempts < lastAttempts ) {
-                scoresFile.seekp( -4, std::ios_base::cur ); // let's go back 4 characters
-                scoresFile << std::setw(3) << attempts << std::endl;
+                return;
             }
+        }
+    }
+    else { // maybe the file doesn't exist?
 
+        scoresFile.open( highScoresFileName, std::ios::app );
+        if( !scoresFile.is_open() ) {
+            std::cout << "Failed to open/create file for write: " << highScoresFileName << "!" << std::endl;
             return;
         }
     }
 
-    // new user
+    // before getline
     if( scoresFile.eof() ) {
         scoresFile.clear();
-        scoresFile << userName << ' ' << std::setw(3) << attempts << std::endl;
     }
+
+    // new user
+    scoresFile << userName << ' ' << std::setw(3) << attempts << std::endl;
 }
 
 void printResult( const char* highScoresFileName ) {
